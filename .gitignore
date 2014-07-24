@@ -54,3 +54,6 @@ docs/_build/
 
 # vagrant bookkeeping
 .vagrant/
+
+# packer stuff
+packer_virtualbox-ovf_virtualbox.box
