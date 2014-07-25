@@ -7,16 +7,16 @@
   "builders": [
     {
       "type": "virtualbox-ovf",
-       "source_path": "/Users/{{user `cur_user_name`}}/.vagrant.d/boxes/box-cutter-VAGRANTSLASH-ubuntu1404-i386/1.0.2/virtualbox/box.ovf",
-       "ssh_username": "vagrant",
-       "ssh_password": "vagrant",
-       "headless": true,
-       "vboxmanage": [
-         ["modifyvm", "{{.Name}}", "--memory", "2048"],
-         ["modifyvm", "{{.Name}}", "--cpus", "2"]
-       ],
-       "ssh_wait_timeout": "30s",
-       "shutdown_command": "sudo shutdown -h now"
+      "source_path": "/Users/{{user `cur_user_name`}}/.vagrant.d/boxes/box-cutter-VAGRANTSLASH-ubuntu1404-i386/1.0.2/virtualbox/box.ovf",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "headless": true,
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "2"]
+      ],
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "sudo shutdown -h now"
     }
   ],
   "provisioners": [
