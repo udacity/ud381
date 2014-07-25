@@ -60,3 +60,5 @@ packer_virtualbox-ovf_virtualbox.box
 
 # maven builds
 **/target/*
+
+.credentials
