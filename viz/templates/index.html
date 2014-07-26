@@ -31,6 +31,7 @@ circle {
   fill: none;
   stroke-width: 2.5px;
 }
+
 </style>
 
 <body>
@@ -74,7 +75,10 @@ function draw(words) {
   .attr("transform", function(d) {
     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
   })
-  .text(function(d) { return d.key; });
+  .text(function(d) { return d.key; })
+  // add tooltip for mousehover count info
+  .append("text:title")
+  .text(function(d) { return d.value; });
 }
 
 </script>

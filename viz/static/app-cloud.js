@@ -11,13 +11,12 @@ source.onmessage = function (event) {
   word = event.data.split(":")[0];
   count = event.data.split(":")[1];
   if(!skip(word)){
-    console.log("testing@@@@@@@@@@@@@")
     hash[word]=count;
   }
 
   if(updates > UPDATE_RESET){
     d3.select("svg").remove();
-    console.log("cloudArray-5" + JSON.stringify(d3.entries(hash)));
+    console.log("cloudArray-9" + JSON.stringify(d3.entries(hash)));
 
     var frequency_list = d3.entries(hash);
 
@@ -39,7 +38,6 @@ var skipList = ["https","follow","fucking","1","2","please","following","followe
 var skip = function(tWord){
   for(var i=0; i<skipList.length; i++){
     if(tWord === skipList[i]){
-      console.log("skipped true--------------" + tWord);
       return true;
     }
   }
