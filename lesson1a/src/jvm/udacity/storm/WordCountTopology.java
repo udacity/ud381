@@ -27,10 +27,17 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * This topology demonstrates Storm's stream groupings and multilang capabilities.
+ * This topology demonstrates how to count distinct words from
+ * a stream of words.
+ * 
+ * This is an example for Udacity Real Time Analytics Course - ud381
+ *
  */
 public class WordCountTopology {
 
+  /**
+   * Constructor - does nothing
+   */
   private WordCountTopology() { }
 
   /**
@@ -48,13 +55,16 @@ public class WordCountTopology {
     private String[] wordList;
 
     @Override
-    public void open(Map map, TopologyContext topologyContext,
-                     SpoutOutputCollector spoutOutputCollector) {
+    public void open(
+        Map                     map, 
+        TopologyContext         topologyContext,
+        SpoutOutputCollector    spoutOutputCollector) 
+    {
 
       // initialize the random number generator
       rnd = new Random(31);
 
-      // save the output collector provided
+      // save the output collector for emitting tuples
       collector = spoutOutputCollector;
 
       // initialize a set of words
@@ -62,8 +72,8 @@ public class WordCountTopology {
     }
 
     @Override
-    public void nextTuple() {
-
+    public void nextTuple() 
+    {
       // sleep a second before emitting any word
       Utils.sleep(1000);
 
@@ -75,7 +85,11 @@ public class WordCountTopology {
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+    public void declareOutputFields(
+        OutputFieldsDeclarer outputFieldsDeclarer)
+    {
+      // tell storm the schema of the output tuple for this spout
+      // tuple consists of a single column called 'word' 
       outputFieldsDeclarer.declare(new Fields("word"));
     }
   }
@@ -85,31 +99,51 @@ public class WordCountTopology {
    */
   static class CountBolt extends BaseRichBolt {
 
+    // To output tuples from this bolt to the next stage bolts, if any
     private OutputCollector collector;
 
     // Map to store the count of the words
     private Map<String, Integer> countMap;
 
     @Override
-    public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
-      // collector = outputCollector;
+    public void prepare(
+        Map                     map, 
+        TopologyContext         topologyContext, 
+        OutputCollector         outputCollector) 
+    {
+
+      // save the collector for emitting tuples 
+      collector = outputCollector;
+
+      // create and initialize the map
       countMap = new HashMap<String, Integer>();
     }
 
     @Override
-    public void execute(Tuple tuple) {
-      String key = tuple.getString(0);
-      if (countMap.get(key) == null) {
-        countMap.put(key, 1);
+    public void execute(Tuple tuple) 
+    {
+      // get the word from the 1st column of incoming tuple
+      String word = tuple.getString(0);
+
+      // check if the word is present in the map
+      if (countMap.get(word) == null) {
+
+        // not present, add the word with a count of 1
+        countMap.put(word, 1);
       } else {
-        Integer val = countMap.get(key);
-        countMap.put(key, ++val);
+
+        // already there, hence get the count 
+        Integer val = countMap.get(word);
+
+        // increment the count and save it to the map
+        countMap.put(word, ++val);
       }
-      // collector.ack(tuple);
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
+    {
+      // nothing to add - since it is the final bolt
     }
   }
 
