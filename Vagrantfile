@@ -5,7 +5,6 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "udacity/storm"
-  config.vm.provision "shell", inline: "sudo ufw disable", run: "always"
+  config.vm.box = "udacity/ud381"
   config.vm.network :forwarded_port, guest: 5000, host: 5000
 end
