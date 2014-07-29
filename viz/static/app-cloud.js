@@ -3,37 +3,37 @@ var hash = {};
 var width = 1200;
 var height = 700;
 
-var updates = 0;
-var UPDATE_RESET = 10;
-
+//update hash (associative array) with incoming word and count
 source.onmessage = function (event) {
-  updates += 1;
   word = event.data.split(":")[0];
   count = event.data.split(":")[1];
   if(!skip(word)){
     hash[word]=count;
   }
-
-  if(updates > UPDATE_RESET){
-    d3.select("svg").remove();
-    console.log("cloudArray-10" + JSON.stringify(d3.entries(hash)));
-
-    var frequency_list = d3.entries(hash);
-
-    d3.layout.cloud().size([800, 300])
-    .words(frequency_list)
-    .rotate(0)
-    .fontSize(function(d) { return d.value; })
-    .on("end", draw)
-    .start();
-
-    //hash={};
-    updates=0;
-  }
-
 };
 
-var skipList = ["https","follow","fucking","1","2","please","following","followers"];
+//update function for visualization
+var updateViz =  function(){
+  d3.select("svg").remove();
+
+  //print console message
+  console.log("cloudArray-1" + JSON.stringify(d3.entries(hash)));
+
+  var frequency_list = d3.entries(hash);
+
+  d3.layout.cloud().size([800, 300])
+  .words(frequency_list)
+  .rotate(0)
+  .fontSize(function(d) { return d.value; })
+  .on("end", draw)
+  .start();
+};
+
+// run updateViz at #7000 milliseconds, or 7 second
+window.setInterval(updateViz, 7000);
+
+//clean list, can be added to word skipping bolt
+var skipList = ["https","follow","1","2","please","following","followers","fucking"];
 
 var skip = function(tWord){
   for(var i=0; i<skipList.length; i++){

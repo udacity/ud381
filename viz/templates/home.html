@@ -34,10 +34,11 @@ circle {
 
 <body>
   <h1>Storm Word Count: I Love Udacity!!!</h1>
-  <p>Word Count Reporter Bolt - Home</p>
+  <p>Word Count Reporter Bolt - Basic</p>
   <div id="chart"></div>
 </body>
 <script>
+var colors = d3.scale.category10();
 var svgContainer = d3.select("body").append("svg")
 .attr("width", width)
 .attr("height", height);
