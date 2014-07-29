@@ -16,9 +16,13 @@ def event_stream():
 
 @app.route('/')
 def show_homepage():
-    #return render_template("home.html")
+  #Word Cloud = index.html and app-cloud.js
     return render_template("index.html")
 
+@app.route('/basic')
+def show_basic():
+  #Basic d3 view = home.html and app.js
+    return render_template("home.html")
 
 @app.route('/stream')
 def stream():
@@ -26,6 +30,6 @@ def stream():
 
 
 if __name__ == '__main__':
-    app.run(threaded=True, 
+    app.run(threaded=True,
     host='0.0.0.0'
 )
