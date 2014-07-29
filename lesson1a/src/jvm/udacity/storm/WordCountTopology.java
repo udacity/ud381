@@ -156,7 +156,7 @@ public class WordCountTopology {
     builder.setSpout("word-spout", new WordSpout(), 5);
 
     // attach the count bolt using fields grouping - parallelism of 15
-    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("spout", new Fields("word"));
+    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
 
     // create the default config object
     Config conf = new Config();
