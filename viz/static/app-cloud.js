@@ -4,7 +4,7 @@ var width = 1200;
 var height = 700;
 
 var updates = 0;
-var UPDATE_RESET = 50;
+var UPDATE_RESET = 10;
 
 source.onmessage = function (event) {
   updates += 1;
@@ -16,7 +16,7 @@ source.onmessage = function (event) {
 
   if(updates > UPDATE_RESET){
     d3.select("svg").remove();
-    console.log("cloudArray-9" + JSON.stringify(d3.entries(hash)));
+    console.log("cloudArray-10" + JSON.stringify(d3.entries(hash)));
 
     var frequency_list = d3.entries(hash);
 

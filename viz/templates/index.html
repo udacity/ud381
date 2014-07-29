@@ -76,11 +76,7 @@ function draw(words) {
     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
   })
   .text(function(d) { return d.key; })
-<<<<<<< HEAD
-  // add tooltip for mousehover count info
-=======
   // add tooltip for mouseover count info
->>>>>>> e8fa6a18fc7c6279b943bc7808e884d2282446cd
   .append("text:title")
   .text(function(d) { return d.value; });
 }
