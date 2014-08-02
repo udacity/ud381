@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import com.lambdaworks.redis.RedisClient;
+import com.lambdaworks.redis.RedisConnection;
+
 /**
  * This topology demonstrates how to count distinct words from
  * a stream of words.
@@ -138,17 +141,67 @@ public class WordCountTopology {
         // increment the count and save it to the map
         countMap.put(word, ++val);
       }
+
+      // emit the word and count 
+      collector.emit(new Values(word, countMap.get(word)));
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
     {
+      // tell storm the schema of the output tuple for this spout
+      // tuple consists of a two columns called 'word' and 'count'
+
+      // declare the first column 'word'
+      outputFieldsDeclarer.declare(new Fields("word"));
+
+      // declare the second column 'count'
+      outputFieldsDeclarer.declare(new Fields("count"));
+    }
+  }
+
+  /**
+   * A bolt that prints the word and count to redis
+   */
+  static class ReportBolt extends BaseRichBolt 
+  {
+    // place holder to keep the connection to redis
+    transient RedisConnection<String,String> redis;
+
+    @Override
+    public void prepare(
+        Map                     map, 
+        TopologyContext         topologyContext, 
+        OutputCollector         outputCollector) 
+    {
+      // instantiate a redis connection
+      RedisClient client = new RedisClient("localhost",6379);
+
+      // initiate the actual connection
+      redis = client.connect();
+    }
+
+    @Override
+    public void execute(Tuple tuple)
+    {
+      // access the first column 'word'
+      String word = tuple.getStringByField("word");
+
+      // access the second column 'count'
+      Integer count = tuple.getIntegerByField("count");
+
+      // publish the word count to redis using word as the key
+      redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+    }
+
+    public void declareOutputFields(OutputFieldsDeclarer declarer)
+    {
       // nothing to add - since it is the final bolt
     }
   }
 
-  public static void main(String[] args) throws Exception {
-
+  public static void main(String[] args) throws Exception 
+  {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
@@ -157,6 +210,9 @@ public class WordCountTopology {
 
     // attach the count bolt using fields grouping - parallelism of 15
     builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
+
+    // attach the report bolt using global grouping - parallelism of 1
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
 
     // create the default config object
     Config conf = new Config();

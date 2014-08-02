@@ -19,49 +19,107 @@ import java.util.Map;
 /**
  * This is a basic example of a Storm topology.
  */
+
+/**
+ * This is a basic example of a storm topology.
+ *
+ * This topology demonstrates how to add three exclamation marks '!!!'
+ * to each word emitted
+ *
+ * This is an example for Udacity Real Time Analytics Course - ud381
+ *
+ */
 public class ExclamationTopology {
 
-  public static class ExclamationBolt extends BaseRichBolt {
+  /**
+   * A bolt that adds the exclamation marks '!!!' to word
+   */
+  public static class ExclamationBolt extends BaseRichBolt 
+  {
+    // To output tuples from this bolt to the next stage bolts, if any
     OutputCollector _collector;
 
     @Override
-    public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
+    public void prepare(
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         collector) 
+    {
+      // save the output collector for emitting tuples
       _collector = collector;
     }
 
     @Override
-    public void execute(Tuple tuple) {
-      _collector.emit(tuple, new Values(tuple.getString(0) + "!!!"));
-      _collector.ack(tuple);
+    public void execute(Tuple tuple) 
+    {
+      // get the column word from tuple
+      String word = tuple.getString(0);
+
+      // build the word with the exclamation marks appended
+      StringBuilder exclamatedWord = new StringBuilder();
+      exclamatedWord.append(word).append("!!!");
+   
+      // emit the word with exclamations
+      _collector.emit(tuple, new Values(exclamatedWord.toString()));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("word"));
+    public void declareOutputFields(OutputFieldsDeclarer declarer) 
+    {
+      // tell storm the schema of the output tuple for this spout
+
+      // tuple consists of a single column called 'exclamated-word'
+      declarer.declare(new Fields("exclamated-word"));
     }
   }
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) throws Exception 
+  {
+    // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
+    // attach the word spout to the topology - parallelism of 10
     builder.setSpout("word", new TestWordSpout(), 10);
-    builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
-    builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclaim1");
 
+    // attach the exclamation bolt to the topology - parallelism of 3
+    builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
+
+    // attach another exclamation bolt to the topology - parallelism of 2
+    builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclamted-word");
+
+    // create the default config object
     Config conf = new Config();
+
+    // set the config in debugging mode
     conf.setDebug(true);
 
     if (args != null && args.length > 0) {
+
+      // run it in a live cluster
+
+      // set the number of workers for running all spout and bolt tasks
       conf.setNumWorkers(3);
 
+      // create the topology and submit with config
       StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
-    }
-    else {
 
+    } else {
+
+      // run it in a simulated local cluster
+
+      // create the local cluster instance
       LocalCluster cluster = new LocalCluster();
-      cluster.submitTopology("test", conf, builder.createTopology());
-      Utils.sleep(10000);
-      cluster.killTopology("test");
+
+      // submit the topology to the local cluster
+      cluster.submitTopology("exclamation", conf, builder.createTopology());
+
+      // let the topology run for 10 seconds. note topologies never terminate!
+      Thread.sleep(10000);
+
+      // kill the topology
+      cluster.killTopology("exclamation");
+
+      // we are done, so shutdown the local cluster
       cluster.shutdown();
     }
   }
