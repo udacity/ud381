@@ -192,6 +192,29 @@ public class TweetTopology {
     }
   }
 
+  public static class StdoutBolt extends BaseRichBolt 
+  {
+    OutputCollector _collector;
+
+    @Override
+    public void prepare(Map conf, TopologyContext context, OutputCollector collector) 
+    {
+      _collector = collector;
+    }
+
+    @Override
+    public void execute(Tuple tuple) 
+    {
+      _collector.emit(tuple, new Values(tuple.getValue(0)));
+    }
+
+    @Override
+    public void declareOutputFields(OutputFieldsDeclarer declarer) 
+    {
+      declarer.declare(new Fields("tweet"));
+    }
+  }
+
   /**
    * A bolt that counts the words that it receives
    */
@@ -320,14 +343,16 @@ public class TweetTopology {
     // attach the tweet spout to the topology - parallelism of 1
     builder.setSpout("tweet-spout", tweetSpout, 1);
 
+    builder.setBolt("stdout-bolt", new StdoutBolt(), 3).shuffleGrouping("tweet");
+
     // attach the parse tweet bolt using shuffle grouping
     // builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("word");
 
     // attach the count bolt using fields grouping - parallelism of 15
-    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
+    // builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
 
     // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
+    // builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
 
     // create the default config object
     Config conf = new Config();
