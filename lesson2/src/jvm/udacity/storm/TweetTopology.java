@@ -343,7 +343,7 @@ public class TweetTopology {
     // attach the tweet spout to the topology - parallelism of 1
     builder.setSpout("tweet-spout", tweetSpout, 1);
 
-    builder.setBolt("stdout-bolt", new StdoutBolt(), 3).shuffleGrouping("tweet");
+    builder.setBolt("stdout-bolt", new StdoutBolt(), 3).shuffleGrouping("tweet-spout");
 
     // attach the parse tweet bolt using shuffle grouping
     // builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("word");
