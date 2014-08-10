@@ -1,13 +1,13 @@
 {
   "variables": {
-    "cur_user_name": "{{env `USER`}}",
+    "home": "{{env `HOME`}}",
     "cloud_token": "{{env `VAGRANT_CLOUD_TOKEN`}}",
     "version": "{{env `BOX_VERSION`}}"
   },
   "builders": [
     {
       "type": "virtualbox-ovf",
-      "source_path": "/Users/{{user `cur_user_name`}}/.vagrant.d/boxes/box-cutter-VAGRANTSLASH-ubuntu1404-i386/1.0.2/virtualbox/box.ovf",
+      "source_path": "{{user `home`}}/.vagrant.d/boxes/box-cutter-VAGRANTSLASH-ubuntu1404-i386/1.0.2/virtualbox/box.ovf",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "headless": true,
@@ -22,7 +22,7 @@
   "provisioners": [
     {
       "type": "shell",
-      "script": "rt-provision-32.sh"
+      "script": "provision.sh"
     }
   ],
   "post-processors": [
