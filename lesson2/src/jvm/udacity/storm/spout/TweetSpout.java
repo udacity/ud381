@@ -20,7 +20,7 @@ import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.StallWarning;
 
-public class TwitterSampleSpout extends BaseRichSpout 
+public class TweetSpout extends BaseRichSpout 
 {
     SpoutOutputCollector _collector;
     LinkedBlockingQueue<Status> queue = null;
@@ -30,12 +30,12 @@ public class TwitterSampleSpout extends BaseRichSpout
     String _accesstoken;
     String _accesssecret;
     
-    public TwitterSampleSpout(String key, String secret) {
+    public TweetSpout(String key, String secret) {
         _custkey = key;
         _custsecret = secret;
     }
 
-    public TwitterSampleSpout(String key, String secret, String token, String tokensecret) {
+    public TweetSpout(String key, String secret, String token, String tokensecret) {
         _custkey = key;
         _custsecret = secret;
         _accesstoken = token;
