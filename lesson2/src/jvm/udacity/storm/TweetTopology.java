@@ -24,8 +24,12 @@ import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.StallWarning;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import com.lambdaworks.redis.RedisClient;
+import com.lambdaworks.redis.RedisConnection;
 
 /**
  * This is a basic example of a Storm topology.
@@ -188,23 +192,106 @@ public class TweetTopology {
     }
   }
 
-  public static class StdoutBolt extends BaseRichBolt {
-    OutputCollector _collector;
+  /**
+   * A bolt that counts the words that it receives
+   */
+  static class CountBolt extends BaseRichBolt {
+
+    // To output tuples from this bolt to the next stage bolts, if any
+    private OutputCollector collector;
+
+    // Map to store the count of the words
+    private Map<String, Integer> countMap;
 
     @Override
-    public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
-      _collector = collector;
+    public void prepare(
+        Map                     map, 
+        TopologyContext         topologyContext, 
+        OutputCollector         outputCollector) 
+    {
+
+      // save the collector for emitting tuples 
+      collector = outputCollector;
+
+      // create and initialize the map
+      countMap = new HashMap<String, Integer>();
     }
 
     @Override
-    public void execute(Tuple tuple) {
-      _collector.emit(tuple, new Values(tuple.getValue(0)));
-      _collector.ack(tuple);
+    public void execute(Tuple tuple) 
+    {
+      // get the word from the 1st column of incoming tuple
+      String word = tuple.getString(0);
+
+      // check if the word is present in the map
+      if (countMap.get(word) == null) {
+
+        // not present, add the word with a count of 1
+        countMap.put(word, 1);
+      } else {
+
+        // already there, hence get the count 
+        Integer val = countMap.get(word);
+
+        // increment the count and save it to the map
+        countMap.put(word, ++val);
+      }
+
+      // emit the word and count 
+      collector.emit(new Values(word, countMap.get(word)));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("word"));
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
+    {
+      // tell storm the schema of the output tuple for this spout
+      // tuple consists of a two columns called 'word' and 'count'
+
+      // declare the first column 'word'
+      outputFieldsDeclarer.declare(new Fields("word"));
+
+      // declare the second column 'count'
+      outputFieldsDeclarer.declare(new Fields("count"));
+    }
+  }
+
+  /**
+   * A bolt that prints the word and count to redis
+   */
+  static class ReportBolt extends BaseRichBolt 
+  {
+    // place holder to keep the connection to redis
+    transient RedisConnection<String,String> redis;
+
+    @Override
+    public void prepare(
+        Map                     map, 
+        TopologyContext         topologyContext, 
+        OutputCollector         outputCollector) 
+    {
+      // instantiate a redis connection
+      RedisClient client = new RedisClient("localhost",6379);
+
+      // initiate the actual connection
+      redis = client.connect();
+    }
+
+    @Override
+    public void execute(Tuple tuple)
+    {
+      // access the first column 'word'
+      String word = tuple.getStringByField("word");
+
+      // access the second column 'count'
+      Integer count = tuple.getIntegerByField("count");
+
+      // publish the word count to redis using word as the key
+      redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+    }
+
+    public void declareOutputFields(OutputFieldsDeclarer declarer)
+    {
+      // nothing to add - since it is the final bolt
     }
   }
 
@@ -233,7 +320,14 @@ public class TweetTopology {
     // attach the tweet spout to the topology - parallelism of 1
     builder.setSpout("tweet-spout", tweetSpout, 1);
 
-    builder.setBolt("stdout", new StdoutBolt(), 3).shuffleGrouping("tweet");
+    // attach the parse tweet bolt using shuffle grouping
+    // builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("word");
+
+    // attach the count bolt using fields grouping - parallelism of 15
+    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
+
+    // attach the report bolt using global grouping - parallelism of 1
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
 
     // create the default config object
     Config conf = new Config();
