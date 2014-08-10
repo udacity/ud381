@@ -188,30 +188,52 @@ public class TweetTopology {
     {
       // tell storm the schema of the output tuple for this spout
       // tuple consists of a single column called 'tweet'
-      outputFieldsDeclarer.declare(new Fields("word"));
+      outputFieldsDeclarer.declare(new Fields("tweet"));
     }
   }
 
-  public static class StdoutBolt extends BaseRichBolt 
+  /**
+   * A bolt that parses the tweet into words
+   */
+  public static class ParseTweetBolt extends BaseRichBolt 
   {
-    OutputCollector _collector;
+    // To output tuples from this bolt to the count bolt
+    OutputCollector collector;
 
     @Override
-    public void prepare(Map conf, TopologyContext context, OutputCollector collector) 
+    public void prepare(
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         outputCollector) 
     {
-      _collector = collector;
+      // save the output collector for emitting tuples
+      collector = outputCollector;
     }
 
     @Override
     public void execute(Tuple tuple) 
     {
-      _collector.emit(tuple, new Values(tuple.getValue(0)));
+      // get the 1st column 'tweet' from tuple
+      String tweet = tuple.getString(0);
+
+      // provide the delimiters for splitting the tweet
+      String delims = "[ .,?!]+";
+
+      // now split the tweet into tokens
+      String[] tokens = tweet.split(delims);
+
+      // for each token/word, emit it
+      for (String token: tokens) {
+        collector.emit(new Values(token));
+      }
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) 
     {
-      declarer.declare(new Fields("tweet"));
+      // tell storm the schema of the output tuple for this spout
+      // tuple consists of a single column called 'tweet-word'
+      declarer.declare(new Fields("tweet-word"));
     }
   }
 
@@ -343,16 +365,14 @@ public class TweetTopology {
     // attach the tweet spout to the topology - parallelism of 1
     builder.setSpout("tweet-spout", tweetSpout, 1);
 
-    builder.setBolt("stdout-bolt", new StdoutBolt(), 3).shuffleGrouping("tweet-spout");
-
     // attach the parse tweet bolt using shuffle grouping
-    // builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("word");
+    builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("tweet-spout");
 
     // attach the count bolt using fields grouping - parallelism of 15
-    // builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("word-spout", new Fields("word"));
+    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 
     // attach the report bolt using global grouping - parallelism of 1
-    // builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
 
     // create the default config object
     Config conf = new Config();
