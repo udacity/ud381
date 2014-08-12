@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * A bolt that counts the words that it receives
  */
-public class CountBolt extends BaseRichBolt 
+public class CountBolt extends BaseRichBolt
 {
   // To output tuples from this bolt to the next stage bolts, if any
   private OutputCollector collector;
@@ -32,12 +32,12 @@ public class CountBolt extends BaseRichBolt
 
   @Override
   public void prepare(
-      Map                     map, 
-      TopologyContext         topologyContext, 
-      OutputCollector         outputCollector) 
+      Map                     map,
+      TopologyContext         topologyContext,
+      OutputCollector         outputCollector)
   {
 
-    // save the collector for emitting tuples 
+    // save the collector for emitting tuples
     collector = outputCollector;
 
     // create and initialize the map
@@ -45,7 +45,7 @@ public class CountBolt extends BaseRichBolt
   }
 
   @Override
-  public void execute(Tuple tuple) 
+  public void execute(Tuple tuple)
   {
     // get the word from the 1st column of incoming tuple
     String word = tuple.getString(0);
@@ -57,27 +57,24 @@ public class CountBolt extends BaseRichBolt
       countMap.put(word, 1);
     } else {
 
-      // already there, hence get the count 
+      // already there, hence get the count
       Integer val = countMap.get(word);
 
       // increment the count and save it to the map
       countMap.put(word, ++val);
     }
 
-    // emit the word and count 
+    // emit the word and count
     collector.emit(new Values(word, countMap.get(word)));
   }
 
   @Override
-  public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
+  public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer)
   {
     // tell storm the schema of the output tuple for this spout
     // tuple consists of a two columns called 'word' and 'count'
 
-    // declare the first column 'word'
-    outputFieldsDeclarer.declare(new Fields("word"));
-
-    // declare the second column 'count'
-    outputFieldsDeclarer.declare(new Fields("count"));
+    // declare the first column 'word', second column 'count'
+    outputFieldsDeclarer.declare(new Fields("word","count"));
   }
 }

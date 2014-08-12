@@ -32,7 +32,7 @@ import com.lambdaworks.redis.RedisConnection;
 /**
  * This topology demonstrates how to count distinct words from
  * a stream of words.
- * 
+ *
  * This is an example for Udacity Real Time Analytics Course - ud381
  *
  */
@@ -49,7 +49,7 @@ public class WordCountTopology {
   static class WordSpout extends BaseRichSpout {
 
     // Random number generator
-    private Random rnd;  
+    private Random rnd;
 
     // To output tuples from spout to the next stage
     private SpoutOutputCollector collector;
@@ -59,9 +59,9 @@ public class WordCountTopology {
 
     @Override
     public void open(
-        Map                     map, 
+        Map                     map,
         TopologyContext         topologyContext,
-        SpoutOutputCollector    spoutOutputCollector) 
+        SpoutOutputCollector    spoutOutputCollector)
     {
 
       // initialize the random number generator
@@ -75,12 +75,12 @@ public class WordCountTopology {
     }
 
     @Override
-    public void nextTuple() 
+    public void nextTuple()
     {
       // sleep a second before emitting any word
       Utils.sleep(1000);
 
-      // generate a random number based on the wordList length 
+      // generate a random number based on the wordList length
       int nextInt = rnd.nextInt(wordList.length);
 
       // emit the word chosen by the random number from wordList
@@ -92,7 +92,7 @@ public class WordCountTopology {
         OutputFieldsDeclarer outputFieldsDeclarer)
     {
       // tell storm the schema of the output tuple for this spout
-      // tuple consists of a single column called 'word' 
+      // tuple consists of a single column called 'word'
       outputFieldsDeclarer.declare(new Fields("word"));
     }
   }
@@ -110,12 +110,12 @@ public class WordCountTopology {
 
     @Override
     public void prepare(
-        Map                     map, 
-        TopologyContext         topologyContext, 
-        OutputCollector         outputCollector) 
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         outputCollector)
     {
 
-      // save the collector for emitting tuples 
+      // save the collector for emitting tuples
       collector = outputCollector;
 
       // create and initialize the map
@@ -123,7 +123,7 @@ public class WordCountTopology {
     }
 
     @Override
-    public void execute(Tuple tuple) 
+    public void execute(Tuple tuple)
     {
       // get the word from the 1st column of incoming tuple
       String word = tuple.getString(0);
@@ -135,44 +135,41 @@ public class WordCountTopology {
         countMap.put(word, 1);
       } else {
 
-        // already there, hence get the count 
+        // already there, hence get the count
         Integer val = countMap.get(word);
 
         // increment the count and save it to the map
         countMap.put(word, ++val);
       }
 
-      // emit the word and count 
+      // emit the word and count
       collector.emit(new Values(word, countMap.get(word)));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer)
     {
       // tell storm the schema of the output tuple for this spout
       // tuple consists of a two columns called 'word' and 'count'
 
-      // declare the first column 'word'
-      outputFieldsDeclarer.declare(new Fields("word"));
-
-      // declare the second column 'count'
-      outputFieldsDeclarer.declare(new Fields("count"));
+      // declare the first column 'word', second colmun 'count'
+      outputFieldsDeclarer.declare(new Fields("word","count"));
     }
   }
 
   /**
    * A bolt that prints the word and count to redis
    */
-  static class ReportBolt extends BaseRichBolt 
+  static class ReportBolt extends BaseRichBolt
   {
     // place holder to keep the connection to redis
     transient RedisConnection<String,String> redis;
 
     @Override
     public void prepare(
-        Map                     map, 
-        TopologyContext         topologyContext, 
-        OutputCollector         outputCollector) 
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         outputCollector)
     {
       // instantiate a redis connection
       RedisClient client = new RedisClient("localhost",6379);
@@ -200,7 +197,7 @@ public class WordCountTopology {
     }
   }
 
-  public static void main(String[] args) throws Exception 
+  public static void main(String[] args) throws Exception
   {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();

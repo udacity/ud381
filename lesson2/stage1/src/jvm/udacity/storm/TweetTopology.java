@@ -40,10 +40,10 @@ public class TweetTopology {
    * A spout that uses Twitter streaming API for continuously
    * getting tweets
    */
-  public static class TweetSpout extends BaseRichSpout 
+  public static class TweetSpout extends BaseRichSpout
   {
     // Twitter API authentication credentials
-    String custkey, custsecret;              
+    String custkey, custsecret;
     String accesstoken, accesssecret;
 
     // To output tuples from spout to the next stage bolt
@@ -54,40 +54,40 @@ public class TweetTopology {
 
     // Shared queue for getting buffering tweets received
     LinkedBlockingQueue<String> queue = null;
-    
+
     // Class for listening on the tweet stream - for twitter4j
     private class TweetListener implements StatusListener {
 
       // Implement the callback function when a tweet arrives
       @Override
-      public void onStatus(Status status) 
+      public void onStatus(Status status)
       {
         // add the tweet into the queue buffer
         queue.offer(status.getText());
       }
-  
+
       @Override
-      public void onDeletionNotice(StatusDeletionNotice sdn) 
+      public void onDeletionNotice(StatusDeletionNotice sdn)
       {
       }
-  
+
       @Override
-      public void onTrackLimitationNotice(int i) 
+      public void onTrackLimitationNotice(int i)
       {
       }
-  
+
       @Override
-      public void onScrubGeo(long l, long l1) 
+      public void onScrubGeo(long l, long l1)
       {
       }
-  
+
       @Override
-      public void onStallWarning(StallWarning warning) 
+      public void onStallWarning(StallWarning warning)
       {
       }
-  
+
       @Override
-      public void onException(Exception e) 
+      public void onException(Exception e)
       {
         e.printStackTrace();
       }
@@ -97,17 +97,17 @@ public class TweetTopology {
      * Constructor for tweet spout that accepts the credentials
      */
     public TweetSpout(
-        String                key, 
-        String                secret, 
-        String                token, 
-        String                tokensecret) 
+        String                key,
+        String                secret,
+        String                token,
+        String                tokensecret)
     {
       custkey = key;
       custsecret = secret;
       accesstoken = token;
       accesssecret = tokensecret;
     }
-    
+
     @Override
     public void open(
         Map                     map,
@@ -122,7 +122,7 @@ public class TweetTopology {
 
 
       // build the config with credentials for twitter 4j
-      ConfigurationBuilder config = 
+      ConfigurationBuilder config =
           new ConfigurationBuilder()
                  .setOAuthConsumerKey(custkey)
                  .setOAuthConsumerSecret(custsecret)
@@ -130,7 +130,7 @@ public class TweetTopology {
                  .setOAuthAccessTokenSecret(accesssecret);
 
       // create the twitter stream factory with the config
-      TwitterStreamFactory fact = 
+      TwitterStreamFactory fact =
           new TwitterStreamFactory(config.build());
 
       // get an instance of twitter stream
@@ -144,13 +144,13 @@ public class TweetTopology {
     }
 
     @Override
-    public void nextTuple() 
+    public void nextTuple()
     {
       // try to pick a tweet from the buffer
       String ret = queue.poll();
 
       // if no tweet is available, wait for 50 ms and return
-      if (ret==null) 
+      if (ret==null)
       {
         Utils.sleep(50);
         return;
@@ -161,7 +161,7 @@ public class TweetTopology {
     }
 
     @Override
-    public void close() 
+    public void close()
     {
       // shutdown the stream - when we are going to exit
       twitterStream.shutdown();
@@ -171,16 +171,16 @@ public class TweetTopology {
      * Component specific configuration
      */
     @Override
-    public Map<String, Object> getComponentConfiguration() 
+    public Map<String, Object> getComponentConfiguration()
     {
-      // create the component config 
+      // create the component config
       Config ret = new Config();
- 
+
       // set the parallelism for this spout to be 1
       ret.setMaxTaskParallelism(1);
 
       return ret;
-    }    
+    }
 
     @Override
     public void declareOutputFields(
@@ -195,7 +195,7 @@ public class TweetTopology {
   /**
    * A bolt that parses the tweet into words
    */
-  public static class ParseTweetBolt extends BaseRichBolt 
+  public static class ParseTweetBolt extends BaseRichBolt
   {
     // To output tuples from this bolt to the count bolt
     OutputCollector collector;
@@ -204,14 +204,14 @@ public class TweetTopology {
     public void prepare(
         Map                     map,
         TopologyContext         topologyContext,
-        OutputCollector         outputCollector) 
+        OutputCollector         outputCollector)
     {
       // save the output collector for emitting tuples
       collector = outputCollector;
     }
 
     @Override
-    public void execute(Tuple tuple) 
+    public void execute(Tuple tuple)
     {
       // get the 1st column 'tweet' from tuple
       String tweet = tuple.getString(0);
@@ -229,7 +229,7 @@ public class TweetTopology {
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) 
+    public void declareOutputFields(OutputFieldsDeclarer declarer)
     {
       // tell storm the schema of the output tuple for this spout
       // tuple consists of a single column called 'tweet-word'
@@ -250,12 +250,12 @@ public class TweetTopology {
 
     @Override
     public void prepare(
-        Map                     map, 
-        TopologyContext         topologyContext, 
-        OutputCollector         outputCollector) 
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         outputCollector)
     {
 
-      // save the collector for emitting tuples 
+      // save the collector for emitting tuples
       collector = outputCollector;
 
       // create and initialize the map
@@ -263,7 +263,7 @@ public class TweetTopology {
     }
 
     @Override
-    public void execute(Tuple tuple) 
+    public void execute(Tuple tuple)
     {
       // get the word from the 1st column of incoming tuple
       String word = tuple.getString(0);
@@ -275,44 +275,41 @@ public class TweetTopology {
         countMap.put(word, 1);
       } else {
 
-        // already there, hence get the count 
+        // already there, hence get the count
         Integer val = countMap.get(word);
 
         // increment the count and save it to the map
         countMap.put(word, ++val);
       }
 
-      // emit the word and count 
+      // emit the word and count
       collector.emit(new Values(word, countMap.get(word)));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) 
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer)
     {
       // tell storm the schema of the output tuple for this spout
       // tuple consists of a two columns called 'word' and 'count'
 
-      // declare the first column 'word'
-      outputFieldsDeclarer.declare(new Fields("word"));
-
-      // declare the second column 'count'
-      outputFieldsDeclarer.declare(new Fields("count"));
+      // declare the first column 'word', second column 'count'
+      outputFieldsDeclarer.declare(new Fields("word","count"));
     }
   }
 
   /**
    * A bolt that prints the word and count to redis
    */
-  static class ReportBolt extends BaseRichBolt 
+  static class ReportBolt extends BaseRichBolt
   {
     // place holder to keep the connection to redis
     transient RedisConnection<String,String> redis;
 
     @Override
     public void prepare(
-        Map                     map, 
-        TopologyContext         topologyContext, 
-        OutputCollector         outputCollector) 
+        Map                     map,
+        TopologyContext         topologyContext,
+        OutputCollector         outputCollector)
     {
       // instantiate a redis connection
       RedisClient client = new RedisClient("localhost",6379);
@@ -340,25 +337,25 @@ public class TweetTopology {
     }
   }
 
-  public static void main(String[] args) throws Exception 
+  public static void main(String[] args) throws Exception
   {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
     /*
      * In order to create the spout, you need to get twitter credentials
-     * If you need to use Twitter firehose/Tweet stream for your idea, 
+     * If you need to use Twitter firehose/Tweet stream for your idea,
      * create a set of credentials by following the instructions at
      *
      * https://dev.twitter.com/discussions/631
      *
      */
- 
+
     // now create the tweet spout with the credentials
     TweetSpout tweetSpout = new TweetSpout(
         "[Your customer key]",
         "[Your secret key]",
-        "[Your access token]", 
+        "[Your access token]",
         "[Your access secret]"
     );
 
@@ -403,8 +400,8 @@ public class TweetTopology {
       // submit the topology to the local cluster
       cluster.submitTopology("tweet-word-count", conf, builder.createTopology());
 
-      // let the topology run for 10 seconds. note topologies never terminate!
-      Utils.sleep(10000);
+      // let the topology run for 20 seconds. note topologies never terminate!
+      Utils.sleep(20000);
 
       // now kill the topology
       cluster.killTopology("tweet-word-count");
