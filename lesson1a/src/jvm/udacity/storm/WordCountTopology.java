@@ -240,8 +240,8 @@ public class WordCountTopology {
       // submit the topology to the local cluster
       cluster.submitTopology("word-count", conf, builder.createTopology());
 
-      // let the topology run for 10 seconds. note topologies never terminate!
-      Thread.sleep(10000);
+      // let the topology run for 30 seconds. note topologies never terminate!
+      Thread.sleep(30000);
 
       // we are done, so shutdown the local cluster
       cluster.shutdown();
