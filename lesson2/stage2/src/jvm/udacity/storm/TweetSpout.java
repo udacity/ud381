@@ -45,7 +45,7 @@ public class TweetSpout extends BaseRichSpout
   TwitterStream twitterStream;
 
   // Shared queue for getting buffering tweets received
-  LinkedBlockingQueue<Status> queue = null;
+  LinkedBlockingQueue<String> queue = null;
   
   // Class for listening on the tweet stream - for twitter4j
   private class TweetListener implements StatusListener {
@@ -55,7 +55,7 @@ public class TweetSpout extends BaseRichSpout
     public void onStatus(Status status) 
     {
       // add the tweet into the queue buffer
-      queue.offer(status);
+      queue.offer(status.getText());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class TweetSpout extends BaseRichSpout
       SpoutOutputCollector    spoutOutputCollector)
   {
     // create the buffer to block tweets
-    queue = new LinkedBlockingQueue<Status>(1000);
+    queue = new LinkedBlockingQueue<String>(1000);
 
     // save the output collector for emitting tuples
     collector = spoutOutputCollector;
@@ -139,7 +139,7 @@ public class TweetSpout extends BaseRichSpout
   public void nextTuple() 
   {
     // try to pick a tweet from the buffer
-    Status ret = queue.poll();
+    String ret = queue.poll();
 
     // if no tweet is available, wait for 50 ms and return
     if (ret==null) 

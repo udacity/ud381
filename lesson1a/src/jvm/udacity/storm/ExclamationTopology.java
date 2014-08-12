@@ -85,7 +85,7 @@ public class ExclamationTopology {
     builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
 
     // attach another exclamation bolt to the topology - parallelism of 2
-    builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclamted-word");
+    builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclaim1");
 
     // create the default config object
     Config conf = new Config();
