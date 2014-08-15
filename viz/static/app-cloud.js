@@ -14,8 +14,6 @@ source.onmessage = function (event) {
 
 //update function for visualization
 var updateViz =  function(){
-  d3.select("svg").remove();
-
   //print console message
   console.log("cloudArray-1" + JSON.stringify(d3.entries(hash)));
 
@@ -33,7 +31,7 @@ var updateViz =  function(){
 window.setInterval(updateViz, 7000);
 
 //clean list, can be added to word skipping bolt
-var skipList = ["https","follow","1","2","please","following","followers","fucking"];
+var skipList = ["https","follow","1","2","please","following","followers","fucking","RT","the","at","a"];
 
 var skip = function(tWord){
   for(var i=0; i<skipList.length; i++){

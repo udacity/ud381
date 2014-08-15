@@ -47,6 +47,14 @@ var frequency_list = [d3.entries(hash)];
 var colors = d3.scale.category10();
 console.log(colors);
 
+var groupG = d3.select("body").append("svg")
+.attr("width", 1000)
+.attr("height", 350)
+.attr("class", "wordcloud")
+.append("g")
+.attr("transform", "translate(320,200)");
+
+
 d3.layout.cloud().size([1000, 350])
 .words(frequency_list)
 .rotate(0)
@@ -55,18 +63,13 @@ d3.layout.cloud().size([1000, 350])
 .start();
 
 function draw(words) {
-  d3.select("body").append("svg")
-  .attr("width", 1000)
-  .attr("height", 350)
-  .attr("class", "wordcloud")
-  .append("g")
-  // without the transform, words words would get cutoff to the left and top, they would
-  // appear outside of the SVG area
-  .attr("transform", "translate(320,200)")
+  var textContainer = groupG
   .selectAll("text")
-  .data(words)
-  .enter().append("text")
-  .style("font-size", function(d) { return d.value + "px"; })
+  .data(words);
+
+  textContainer.enter().append("text");
+
+  textContainer.style("font-size", function(d) { return d.value + "px"; })
   .style("fill", function(d, i) { return colors(i); })
   .attr("transform", function(d) {
     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
