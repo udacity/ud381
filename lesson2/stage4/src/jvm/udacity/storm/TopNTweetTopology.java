@@ -16,6 +16,8 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
+import udacity.storm.spout.RandomSentenceSpout;
+
 class TopNTweetTopology
 {
   public static void main(String[] args) throws Exception
@@ -45,8 +47,12 @@ class TopNTweetTopology
     // attach the tweet spout to the topology - parallelism of 1
     builder.setSpout("tweet-spout", tweetSpout, 1);
 
+    // attach the Random Sentence Spout to the topology - parallelism of 1
+    //builder.setSpout("random-sentence-spout", new RandomSentenceSpout(), 1);
+
     // attach the parse tweet bolt using shuffle grouping
     builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("tweet-spout");
+    //builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("random-sentence-spout");
 
     // attach the count bolt using fields grouping - parallelism of 15
     //builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));

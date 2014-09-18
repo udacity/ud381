@@ -368,8 +368,12 @@ public class TweetTopology {
     // attach the count bolt using fields grouping - parallelism of 15
     builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 
+    //*********************************************************************
     // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
+    // Lesson 2 - Stage 1, update Topology to connect Report Bolt, parallelism of 1
+
+    //*********************************************************************
+
 
     // create the default config object
     Config conf = new Config();

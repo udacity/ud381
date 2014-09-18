@@ -34,7 +34,8 @@ public class ParseTweetBolt extends BaseRichBolt
     "http","http:","https","https:","http://","https://","with","just","your",
     "para","want","your","you're","really","video","it's","when","they","their","much",
     "would","what","them","todo","FOLLOW","retweet","RETWEET","even","right","like",
-    "bien","Like"};
+    "bien","Like","will","Will","pero","Pero","can't","were","Can't","Were","TWITTER",
+    "make","take","This","from","about","como","esta","follows","followed"};
 
   @Override
   public void prepare(
@@ -62,7 +63,9 @@ public class ParseTweetBolt extends BaseRichBolt
     for (String token: tokens) {
       //emit only words greater than length 3 and not stopword list
       if(token.length() > 3 && !Arrays.asList(skipWords).contains(token)){
+        //if(token.startsWith("#")){
           collector.emit(new Values(token));
+        //}
       }
     }
   }
