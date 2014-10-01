@@ -23,7 +23,7 @@ class TopNTweetTopology
   public static void main(String[] args) throws Exception
   {
     //Variable TOP_N number of words
-    int TOP_N = 100;
+    int TOP_N = 20;
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 

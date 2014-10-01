@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>storm.starter</groupId>
-  <artifactId>udacity-storm-lesson1a</artifactId>
+  <artifactId>udacity-storm-lesson1</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -83,11 +83,14 @@
       <artifactId>twitter4j-stream</artifactId>
       <version>[3.0,)</version>
     </dependency>
-    <dependency>
-      <groupId>com.lambdaworks</groupId>
-      <artifactId>lettuce</artifactId>
-      <version>2.3.3</version>
-    </dependency>
+    <!--
+    COPY AND PASE: lettuce (redis) code into pom.xml file (located lesson1/stage1/pom.xml)
+     -->
+     <dependency>
+       <groupId>com.lambdaworks</groupId>
+       <artifactId>lettuce</artifactId>
+       <version>2.3.3</version>
+     </dependency>
   </dependencies>
 
   <build>
