@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>storm.starter</groupId>
-  <artifactId>udacity-storm-lesson1a</artifactId>
+  <artifactId>udacity-storm-lesson2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 

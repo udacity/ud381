@@ -63,9 +63,9 @@ public class ParseTweetBolt extends BaseRichBolt
     for (String token: tokens) {
       //emit only words greater than length 3 and not stopword list
       if(token.length() > 3 && !Arrays.asList(skipWords).contains(token)){
-        //if(token.startsWith("#")){
+        if(token.startsWith("#")){
           collector.emit(new Values(token));
-        //}
+        }
       }
     }
   }

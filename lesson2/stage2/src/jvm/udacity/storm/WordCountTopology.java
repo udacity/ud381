@@ -126,21 +126,33 @@ public class WordCountTopology {
     public void execute(Tuple tuple)
     {
       //**************************************************
-      //BEGIN YOUR CODE - Part 1a
+      //BEGIN YOUR CODE - Part 1-of-3
       //Check if incoming word is in countMap.  If word does not
       //exist then add word with count = 1, if word exist then
       //increment count.
 
       //Syntax to get the word from the 1st column of incoming tuple
-      //String word = tuple.getString(0);
+      String word = tuple.getString(0);
 
+      // check if the word is present in the map
+      if (countMap.get(word) == null) {
 
+      // not present, add the word with a count of 1
+      countMap.put(word, 1);
+      } else {
+
+      // already there, hence get the count
+      Integer val = countMap.get(word);
+
+      // increment the count and save it to the map
+      countMap.put(word, ++val);
+    }
 
       //After countMap is updated, emit word and count to output collector
       // Syntax to emit the word and count (uncomment to emit)
-      //collector.emit(new Values(word, countMap.get(word)));
+      collector.emit(new Values(word, countMap.get(word)));
 
-      //END YOUR CODE
+      //END YOUR CODE Part 1-of-3
       //***************************************************
     }
 
@@ -153,12 +165,12 @@ public class WordCountTopology {
       // declare the first column 'word', second colmun 'count'
 
       //****************************************************
-      //BEGIN YOUR CODE - part 1b
+      //BEGIN YOUR CODE - Part 2-of-3
       //uncomment line below to declare output
 
-      //outputFieldsDeclarer.declare(new Fields("word","count"));
+      outputFieldsDeclarer.declare(new Fields("word","count"));
 
-      //END YOUR CODE
+      //END YOUR CODE Part 2-of-3
       //****************************************************
     }
   }
@@ -216,11 +228,12 @@ public class WordCountTopology {
 
     // attach the report bolt using global grouping - parallelism of 1
     //***************************************************
-    // BEGIN YOUR CODE - part 2
+    // BEGIN YOUR CODE - Part 3-of-3
+
+    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
 
 
-
-    // END YOUR CODE
+    // END YOUR CODE Part 3-of-3
     //***************************************************
 
     // create the default config object
@@ -252,8 +265,10 @@ public class WordCountTopology {
       // submit the topology to the local cluster
       cluster.submitTopology("word-count", conf, builder.createTopology());
 
-      // let the topology run for 10 seconds. note topologies never terminate!
-      Thread.sleep(10000);
+      //**********************************************************************
+      // let the topology run for 30 seconds. note topologies never terminate!
+      Thread.sleep(30000);
+      //**********************************************************************
 
       // we are done, so shutdown the local cluster
       cluster.shutdown();

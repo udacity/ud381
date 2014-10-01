@@ -16,6 +16,18 @@ import backtype.storm.utils.Utils;
 
 import java.util.Map;
 
+//********* TO DO 1-of-4 imported http://mvnrepository.com/artifact/com.lambdaworks/lettuce/
+
+
+// COPY AND PASE: following code into pom.xml file (located lesson1/stage1/pom.xml)
+//<dependency>
+//  <groupId>com.lambdaworks</groupId>
+//  <artifactId>lettuce</artifactId>
+//  <version>2.3.3</version>
+//</dependency>
+//
+//********* END 1-of-4
+
 /**
  * This is a basic example of a Storm topology.
  */
@@ -29,28 +41,41 @@ import java.util.Map;
  * This is an example for Udacity Real Time Analytics Course - ud381
  *
  */
-public class ExclamationTopology {
+public class ReporterExclamationTopology {
 
   /**
    * A bolt that adds the exclamation marks '!!!' to word
    */
-  public static class ExclamationBolt extends BaseRichBolt 
+  public static class ExclamationBolt extends BaseRichBolt
   {
     // To output tuples from this bolt to the next stage bolts, if any
     OutputCollector _collector;
+
+    //********* TO DO 2-of-4
+    // place holder to keep the connection to redis
+
+
+    //********* END 2-of-4
 
     @Override
     public void prepare(
         Map                     map,
         TopologyContext         topologyContext,
-        OutputCollector         collector) 
+        OutputCollector         collector)
     {
       // save the output collector for emitting tuples
       _collector = collector;
+
+      //********* TO DO 3-of-4
+      // instantiate a redis connection
+
+      // initiate the actual connection
+
+      //********* END 3-of-4
     }
 
     @Override
-    public void execute(Tuple tuple) 
+    public void execute(Tuple tuple)
     {
       // get the column word from tuple
       String word = tuple.getString(0);
@@ -58,13 +83,18 @@ public class ExclamationTopology {
       // build the word with the exclamation marks appended
       StringBuilder exclamatedWord = new StringBuilder();
       exclamatedWord.append(word).append("!!!");
-   
+
       // emit the word with exclamations
       _collector.emit(tuple, new Values(exclamatedWord.toString()));
+
+      //********* TO DO 4-of-4 Uncomment redis reporter
+      //long count = 30;
+      //redis.publish("WordCountTopology", exclamatedWord.toString() + ":" + Long.toString(count));
+      //********* END 4-of-4
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) 
+    public void declareOutputFields(OutputFieldsDeclarer declarer)
     {
       // tell storm the schema of the output tuple for this spout
 
@@ -73,7 +103,7 @@ public class ExclamationTopology {
     }
   }
 
-  public static void main(String[] args) throws Exception 
+  public static void main(String[] args) throws Exception
   {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
