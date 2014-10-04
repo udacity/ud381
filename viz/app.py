@@ -16,13 +16,13 @@ def event_stream():
 
 @app.route('/')
 def show_homepage():
-  #Word Cloud = index.html and app-cloud.js
-    return render_template("index.html")
+  #Word Cloud = cloud.html and app-cloud.js
+    return render_template("cloud.html")
 
 @app.route('/basic')
 def show_basic():
-  #Basic d3 view = home.html and app.js
-    return render_template("home.html")
+  #Basic d3 view = basic.html and app.js
+    return render_template("basic.html")
 
 @app.route('/stream')
 def stream():
