@@ -48,8 +48,12 @@ class TweetTopology
     // attach the parse tweet bolt using shuffle grouping
     //builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("tweet-spout");
 
+    //************* replace with URLBolt emitting text using shuffle grouping
+    builder.setBolt("python-URL-bolt", new URLBolt(), 10).shuffleGrouping("tweet-spout");
+
+
     //************* replace Java ParseTweetBolt with Java/Python SplitSentence
-    builder.setBolt("python-split-sentence", new SplitSentence(), 10).shuffleGrouping("tweet-spout");
+    builder.setBolt("python-split-sentence", new SplitSentence(), 10).shuffleGrouping("python-URL-bolt");
 
     // attach the count bolt using fields grouping - parallelism of 15
     //builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
@@ -90,7 +94,7 @@ class TweetTopology
       cluster.submitTopology("tweet-word-count", conf, builder.createTopology());
 
       // let the topology run for 20 seconds. note topologies never terminate!
-      Utils.sleep(20000);
+      Utils.sleep(1000*20000);
 
       // now kill the topology
       cluster.killTopology("tweet-word-count");

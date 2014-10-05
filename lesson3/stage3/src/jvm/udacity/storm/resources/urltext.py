@@ -17,14 +17,26 @@
 # https://github.com/apache/storm/blob/master/examples/storm-starter/multilang/resources/splitsentence.py
 
 import storm
+import urllib2
+from bs4 import BeautifulSoup
 
-class SplitSentenceBolt(storm.BasicBolt):
+class URLBolt(storm.BasicBolt):
     def process(self, tup):
-      #added to check for empty values
-      if tup.values[0]:
-        words = tup.values[0].split(" ")
-        if words:
-          for word in words:
-            storm.emit([word])
+        url = tup.values[0]
+        # pyothn urllib2
+        try:
+          response = urllib2.urlopen(url)
+          html = response.read()
 
-SplitSentenceBolt().run()
+          # using BeautifulSoup, "Making the Soup"
+          soup = BeautifulSoup(html)
+          #urlText = (soup.get_text()) #works, but most pages not formatted well
+          urlText = soup.title.string
+
+          #emit tuple if string exists
+          if urlText:
+            storm.emit([urlText])
+        except:
+          pass
+
+URLBolt().run()
