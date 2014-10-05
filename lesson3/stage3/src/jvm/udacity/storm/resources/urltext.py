@@ -25,17 +25,16 @@ class URLBolt(storm.BasicBolt):
         url = tup.values[0]
         # pyothn urllib2
         try:
-          response = urllib2.urlopen(url)
-          html = response.read()
+          html = urllib2.urlopen(url).read()
 
           # using BeautifulSoup, "Making the Soup"
           soup = BeautifulSoup(html)
-          #urlText = (soup.get_text()) #works, but most pages not formatted well
-          urlText = soup.title.string
+          # return title and paragraph tags
+          urlText = soup.findAll({'title' : True, 'p' : True})
 
           #emit tuple if string exists
           if urlText:
-            storm.emit([urlText])
+            [storm.emit([t.string]) for t in urlText]
         except:
           pass
 
