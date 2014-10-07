@@ -34,7 +34,7 @@ public class ExclamationTopology {
   /**
    * A bolt that adds the exclamation marks '!!!' to word
    */
-  public static class ExclamationBolt extends BaseRichBolt 
+  public static class ExclamationBolt extends BaseRichBolt
   {
     // To output tuples from this bolt to the next stage bolts, if any
     OutputCollector _collector;
@@ -43,14 +43,14 @@ public class ExclamationTopology {
     public void prepare(
         Map                     map,
         TopologyContext         topologyContext,
-        OutputCollector         collector) 
+        OutputCollector         collector)
     {
       // save the output collector for emitting tuples
       _collector = collector;
     }
 
     @Override
-    public void execute(Tuple tuple) 
+    public void execute(Tuple tuple)
     {
       // get the column word from tuple
       String word = tuple.getString(0);
@@ -58,13 +58,13 @@ public class ExclamationTopology {
       // build the word with the exclamation marks appended
       StringBuilder exclamatedWord = new StringBuilder();
       exclamatedWord.append(word).append("!!!");
-   
+
       // emit the word with exclamations
       _collector.emit(tuple, new Values(exclamatedWord.toString()));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) 
+    public void declareOutputFields(OutputFieldsDeclarer declarer)
     {
       // tell storm the schema of the output tuple for this spout
 
@@ -73,7 +73,7 @@ public class ExclamationTopology {
     }
   }
 
-  public static void main(String[] args) throws Exception 
+  public static void main(String[] args) throws Exception
   {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
