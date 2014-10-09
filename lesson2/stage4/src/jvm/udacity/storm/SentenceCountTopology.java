@@ -29,6 +29,8 @@ import java.util.Random;
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.RedisConnection;
 
+import udacity.storm.spout.RandomSentenceSpout;
+
 /**
  * This topology demonstrates how to count distinct words from
  * a stream of words.
@@ -98,49 +100,6 @@ public class SentenceCountTopology {
       outputFieldsDeclarer.declare(new Fields("word"));
     }
   }
-
-  //**********************************************************
-  // Add sentence spout
-
-  //**********************************************************
-  /**
-   * A bolt emits random sentences with fields "sentence"
-   */
-  // Note: enter static class with private class variables
-  static class RandomSentenceSpout extends BaseRichSpout {
-    private SpoutOutputCollector _collector;
-    private Random _rand;
-
-
-    @Override
-    public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-      _collector = collector;
-      _rand = new Random();
-    }
-
-    @Override
-    public void nextTuple() {
-      Utils.sleep(100);
-      String[] sentences = new String[]{
-        "the cow jumped over the moon",
-        "an apple a day keeps the doctor away",
-        "four score and seven years ago",
-        "snow white and the seven dwarfs",
-        "i am at two with nature"
-        };
-      String sentence = sentences[_rand.nextInt(sentences.length)];
-      _collector.emit(new Values(sentence));
-    }
-
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("sentence"));
-    }
-
-  }
-
-  // END SENTENCE SPOUT
-  // **************************************************************
 
   /**
    * A bolt that counts the words that it receives

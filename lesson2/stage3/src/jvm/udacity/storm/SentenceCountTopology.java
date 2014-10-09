@@ -29,6 +29,9 @@ import java.util.Random;
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.RedisConnection;
 
+//********* TO DO part 1-of-2 import RandomSentenceSpout similar to lesson 1
+import udacity.storm.spout.RandomSentenceSpout;
+//********* END TO DO part 1-of-2
 /**
  * This topology demonstrates how to count distinct words from
  * a stream of words.
@@ -98,47 +101,6 @@ public class SentenceCountTopology {
       outputFieldsDeclarer.declare(new Fields("word"));
     }
   }
-
-  //**********************************************************
-  // Add sentence spout
-
-  //**********************************************************
-
-  // Note: static class with private class variables
-  static class RandomSentenceSpout extends BaseRichSpout {
-    private SpoutOutputCollector _collector;
-    private Random _rand;
-
-
-    @Override
-    public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-      _collector = collector;
-      _rand = new Random();
-    }
-
-    @Override
-    public void nextTuple() {
-      Utils.sleep(100);
-      String[] sentences = new String[]{
-        "the cow jumped over the moon",
-        "an apple a day keeps the doctor away",
-        "four score and seven years ago",
-        "snow white and the seven dwarfs",
-        "i am at two with nature"
-        };
-      String sentence = sentences[_rand.nextInt(sentences.length)];
-      _collector.emit(new Values(sentence));
-    }
-
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("sentence"));
-    }
-
-  }
-
-  // END SENTENCE SPOUT
-  // **************************************************************
 
   /**
    * A bolt that counts the words that it receives
@@ -263,6 +225,8 @@ public class SentenceCountTopology {
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
+    //***** TO DO part 2-of-2 remove WordSpout and change to RandomSentenceSpout
+
     // attach the word spout to the topology - parallelism of 5
     //builder.setSpout("word-spout", new WordSpout(), 5);
 
@@ -271,6 +235,8 @@ public class SentenceCountTopology {
 
     // attach the count bolt using fields grouping - parallelism of 15
     builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("sentence-spout", new Fields("sentence"));
+
+    //***** END part 2-of-2 remove*************************************
 
     // attach the report bolt using global grouping - parallelism of 1
     //***************************************************
