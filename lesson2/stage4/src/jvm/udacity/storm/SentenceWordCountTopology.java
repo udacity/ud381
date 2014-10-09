@@ -29,6 +29,8 @@ import java.util.Random;
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.RedisConnection;
 
+import udacity.storm.spout.RandomSentenceSpout;
+
 /**
  * This topology demonstrates how to count distinct words from
  * a stream of words.
@@ -99,49 +101,6 @@ public class SentenceWordCountTopology {
     }
   }
 
-  //**********************************************************
-  // Add sentence spout
-
-  //**********************************************************
-  /**
-   * A bolt emits random sentences with fields "sentence"
-   */
-  // Note: enter static class with private class variables
-  static class RandomSentenceSpout extends BaseRichSpout {
-    private SpoutOutputCollector _collector;
-    private Random _rand;
-
-
-    @Override
-    public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-      _collector = collector;
-      _rand = new Random();
-    }
-
-    @Override
-    public void nextTuple() {
-      Utils.sleep(100);
-      String[] sentences = new String[]{
-        "the cow jumped over the moon",
-        "an apple a day keeps the doctor away",
-        "four score and seven years ago",
-        "snow white and the seven dwarfs",
-        "i am at two with nature"
-        };
-      String sentence = sentences[_rand.nextInt(sentences.length)];
-      _collector.emit(new Values(sentence));
-    }
-
-    @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-      declarer.declare(new Fields("sentence"));
-    }
-
-  }
-
-  // END SENTENCE SPOUT
-  // **************************************************************
-
   //***************************************************************
   // Add Sentence Splitter Bolt
   //***************************************************************
@@ -190,7 +149,9 @@ static class SplitSentenceBolt extends BaseRichBolt{
   }
 }
 
-
+//***************************************************************
+// End Sentence Splitter Bolt
+//***************************************************************
 
   /**
    * A bolt that counts the words that it receives
@@ -322,7 +283,8 @@ static class SplitSentenceBolt extends BaseRichBolt{
     builder.setSpout("sentence-spout", new RandomSentenceSpout(), 1);
 
     // attach split sentence split bolt to topology - parallelism of 15
-    builder.setBolt("split-sentence-bolt", new SplitSentenceBolt(), 15).fieldsGrouping("sentence-spout", new Fields("sentence"));
+    //builder.setBolt("split-sentence-bolt", new SplitSentenceBolt(), 15).fieldsGrouping("sentence-spout", new Fields("sentence"));
+    builder.setBolt("split-sentence-bolt", new SplitSentenceBolt(), 15).shuffleGrouping("sentence-spout");
 
     // attach the count bolt using fields grouping - parallelism of 15
     builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("split-sentence-bolt", new Fields("sentence-word"));
