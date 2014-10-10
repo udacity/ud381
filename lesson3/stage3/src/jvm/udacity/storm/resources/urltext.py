@@ -23,7 +23,7 @@ from bs4 import BeautifulSoup
 class URLBolt(storm.BasicBolt):
     def process(self, tup):
         url = tup.values[0]
-        # pyothn urllib2
+        # python urllib2
         try:
           html = urllib2.urlopen(url).read()
 
