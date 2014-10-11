@@ -50,24 +50,30 @@ public class ReportBolt extends BaseRichBolt
   @Override
   public void execute(Tuple tuple)
   {
+    /**
     Rankings rankableList = (Rankings) tuple.getValue(0);
 
     for (Rankable r: rankableList.getRankings()){
       String word = r.getObject().toString();
+      //updated for TweetsWithTopHashtagsBolt since there is no count
       Long count = r.getCount();
-      redis.publish("WordCountTopology", word + "|" + Long.toString(count));
+      redis.publish("WordCountTopology", word + ":" + Long.toString(count));
     }
+    **/
 
-    // access the first column 'word'
-    //String word = tuple.getStringByField("word");
+    //access the first column 'word'
+    //String word = tuple.getStringByField("word");"tweets"
+    // access the first column 'tweets'
+    String tweets = tuple.getStringByField("tweets");
 
     // access the second column 'count'
     //String word = rankedWords.toString();
     //Integer count = tuple.getIntegerByField("count");
-    //Long count = new Long(100);
+    Long count = new Long(30);
 
     // publish the word count to redis using word as the key
     //redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+    redis.publish("WordCountTopology", tweets + "|" + Long.toString(count));
   }
 
   public void declareOutputFields(OutputFieldsDeclarer declarer)

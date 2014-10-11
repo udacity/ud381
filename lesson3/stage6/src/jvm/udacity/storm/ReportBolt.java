@@ -55,7 +55,7 @@ public class ReportBolt extends BaseRichBolt
     for (Rankable r: rankableList.getRankings()){
       String word = r.getObject().toString();
       Long count = r.getCount();
-      redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+      redis.publish("WordCountTopology", word + "|" + Long.toString(count));
     }
 
     // access the first column 'word'

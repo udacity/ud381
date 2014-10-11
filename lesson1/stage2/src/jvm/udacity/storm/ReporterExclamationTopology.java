@@ -95,7 +95,7 @@ public class ReporterExclamationTopology {
 
       //********* ADDED 4-of-4 redis reporter
       long count = 30;
-      redis.publish("WordCountTopology", exclamatedWord.toString() + ":" + Long.toString(count));
+      redis.publish("WordCountTopology", exclamatedWord.toString() + "|" + Long.toString(count));
       //********* END 4-of-4
     }
 

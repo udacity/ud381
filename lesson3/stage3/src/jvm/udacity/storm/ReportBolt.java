@@ -24,16 +24,16 @@ import com.lambdaworks.redis.RedisConnection;
 /**
  * A bolt that prints the word and count to redis
  */
-public class ReportBolt extends BaseRichBolt 
+public class ReportBolt extends BaseRichBolt
 {
   // place holder to keep the connection to redis
   transient RedisConnection<String,String> redis;
 
   @Override
   public void prepare(
-      Map                     map, 
-      TopologyContext         topologyContext, 
-      OutputCollector         outputCollector) 
+      Map                     map,
+      TopologyContext         topologyContext,
+      OutputCollector         outputCollector)
   {
     // instantiate a redis connection
     RedisClient client = new RedisClient("localhost",6379);
@@ -52,7 +52,7 @@ public class ReportBolt extends BaseRichBolt
     Integer count = tuple.getIntegerByField("count");
 
     // publish the word count to redis using word as the key
-    redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+    redis.publish("WordCountTopology", word + "|" + Long.toString(count));
   }
 
   public void declareOutputFields(OutputFieldsDeclarer declarer)

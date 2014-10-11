@@ -328,7 +328,7 @@ public class TweetTopology {
       Integer count = tuple.getIntegerByField("count");
 
       // publish the word count to redis using word as the key
-      redis.publish("WordCountTopology", word + ":" + Long.toString(count));
+      redis.publish("WordCountTopology", word + "|" + Long.toString(count));
     }
 
     public void declareOutputFields(OutputFieldsDeclarer declarer)
