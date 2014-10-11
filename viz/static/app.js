@@ -4,8 +4,8 @@ var width = 1200;
 var height = 700;
 
 source.onmessage = function (event) {
-  word = event.data.split(":")[0];
-  count = event.data.split(":")[1];
+  word = event.data.split("|")[0];
+  count = event.data.split("|")[1];
   if(!skip(word)){
     hash[word]=count;
   }
@@ -23,15 +23,15 @@ var updateViz = function () {
     text.text(function(d,i){ return d.key; })
       .transition(1000)
       .delay(500*Math.random())
-      .attr("x",function(d,i){ return .5*d.value; })
-      .attr("y",function(d,i){ return 1.5*d.value; })
+      .attr("x",function(d,i){ return (.5*d.value)+i*5; })
+      .attr("y",function(d,i){ return (1.5*d.value)+i*15; })
       .attr("font-size", function(d,i){ return d.value+"px"; })
-      //.attr("fill", function(d, i) { return colors(d.value); });
+      .attr("fill", function(d, i) { return colors(d.value + i*10); })
       //comment following lines and uncomment previous for colors function
-      .attr("fill",function(d,i){return "rgb("+
-      Math.round(255/(1+Math.exp(-.001*d.value)))+","+
-      Math.round(255-255/(1+Math.exp(-.01*d.value)))+","+
-      Math.round(130-255/(1+Math.exp(-.01*d.value)))+")";});
+      //.attr("fill",function(d,i){return "rgb("+
+      //Math.round(255/(1+Math.exp(-.001*d.value)))+","+
+      //Math.round(255-255/(1+Math.exp(-.01*d.value)))+","+
+      //Math.round(130-255/(1+Math.exp(-.01*d.value)))+")";});
 
     console.log("Array-2" + JSON.stringify(d3.entries(hash)));
 };

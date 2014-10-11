@@ -5,8 +5,8 @@ var height = 700;
 
 //update hash (associative array) with incoming word and count
 source.onmessage = function (event) {
-  word = event.data.split(":")[0];
-  count = event.data.split(":")[1];
+  word = event.data.split("|")[0];
+  count = event.data.split("|")[1];
   if(!skip(word)){
     hash[word]=count;
   }
