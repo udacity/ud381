@@ -40,17 +40,16 @@ class TweetTopology
         "[Your access secret]"
     );
 
-    // attach the tweet spout to the topology - parallelism of 1
-    builder.setSpout("tweet-spout", tweetSpout, 1);
+    //*********************************************************************
+    // Complete the Topology.
+    // Part 0: attach the tweet spout to the topology - parallelism of 1
+    // Part 1: // attach the parse tweet bolt, parallelism of 10 (what grouping is needed?)
+    // Part 2: // attach the count bolt, parallelism of 15 (what grouping is needed?)
+    // Part 3: attach the report bolt, parallelism of 1 (what grouping is needed?)
+    // Submit and run the topology.
 
-    // attach the parse tweet bolt using shuffle grouping
-    builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("tweet-spout");
 
-    // attach the count bolt using fields grouping - parallelism of 15
-    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
-
-    // attach the report bolt using global grouping - parallelism of 1
-    builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("count-bolt");
+    //*********************************************************************
 
     // create the default config object
     Config conf = new Config();
