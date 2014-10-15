@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>storm.starter</groupId>
-  <artifactId>udacity-storm-lesson1</artifactId>
+  <artifactId>udacity-storm-lesson1_stage2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>udacity-storm-lesson1</name>
+  <name>udacity-storm-lesson1_stage2</name>
   <url>https://github.com/udacity/ud381</url>
 
   <properties>
