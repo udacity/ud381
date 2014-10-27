@@ -92,6 +92,9 @@
 
   <build>
     <sourceDirectory>src/jvm</sourceDirectory>
+    <!-- ADDING MAVEN RESOURCES FOR PYTHON SHELL -->
+
+    <!-- END ADDING MAVEN RESOURCES FOR PYTHON SHELL -->
     <plugins>
       <!--
         Bind the maven-assembly-plugin to the package phase

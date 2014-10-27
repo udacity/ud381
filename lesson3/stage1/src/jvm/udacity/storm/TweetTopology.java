@@ -17,6 +17,18 @@ import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
 // Lesson 3 Stage 1 is taken from Lesson 2 Stage 6 to provide a basic starting point.
+// Copy, paste and uncomment the following resources module in the POM.xml file.
+// This defines the src/jvm/udacity/storm/resources location needed for python shell
+
+//<!-- ADDING MAVEN RESOURCES FOR PYTHON SHELL -->
+//<resources>
+//  <resource>
+//    <directory>src/jvm/udacity/storm</directory>
+//  </resource>
+//</resources>
+//<!-- END ADDING MAVEN RESOURCES FOR PYTHON SHELL -->
+
+//
 
 class TweetTopology
 {
