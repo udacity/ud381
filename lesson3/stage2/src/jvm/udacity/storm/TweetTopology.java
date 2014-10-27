@@ -16,7 +16,12 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
-// Lesson 3 Stage 1 is taken from Lesson 2 Stage 6 to provide a basic starting point.
+// NOTE - you must install the python Beautiful Soup module in Ubuntu
+// before this code will run.  In your virtual machine, run:
+//
+// sudo apt-get install python-bs4
+//
+// see Lesson 4 for details on adding this provision to your Vagrantfile
 
 class TweetTopology
 {
