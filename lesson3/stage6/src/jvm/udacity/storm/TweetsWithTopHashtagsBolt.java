@@ -43,10 +43,10 @@ public class TweetsWithTopHashtagsBolt extends BaseRichBolt {
      * Else if it is a top hashtags tuple, dequeue the tweets from the queue,
      * compute the ones that contain these hashtags and emit them.
      */
-    if(componentId.equals("tweet-spout")) {
+    if(componentId.equals("Lesson3-Stage6-UPDATE-ME")) {
       String tweet = tuple.getString(0);
       tweetsQueue.add(tweet);
-    } else if(componentId.equals("total-ranker")) {
+    } else if(componentId.equals("Lesson3-Stage6-UPDATE-ME")) {
 
       Rankings rankings = (Rankings) tuple.getValue(0);
 

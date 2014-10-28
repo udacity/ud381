@@ -46,14 +46,12 @@ class TopNTweetTopology
     builder.setBolt("intermediate-ranker", new IntermediateRankingsBolt(TOP_N, 10), 2).fieldsGrouping("rolling-count-bolt", new Fields("obj"));
     builder.setBolt("total-ranker", new TotalRankingsBolt(TOP_N, 2)).globalGrouping("intermediate-ranker");
 
-    /*
+    /* Stage 6 TO DO: Connect and update the TweetsWithTopHashtagsBolt
      * total-ranker bolt output is broadcast (allGrouping) to all the top-tweets bolt instances so
      * that everyone of them have access to the top hashtags
      * tweet-spout tweet stream will be distributed randomly to the top-tweets bolt instances
      */
-    builder.setBolt("top-tweets", new TweetsWithTopHashtagsBolt(), 4)
-        .allGrouping("total-ranker")
-        .shuffleGrouping("tweet-spout");
+
 
     // attach the report bolt using global grouping - parallelism of 1
     //builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("total-ranker");
