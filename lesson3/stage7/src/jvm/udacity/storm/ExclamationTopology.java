@@ -70,7 +70,16 @@ public class ExclamationTopology {
     /*
      * Use component id to modify behavior
      */
-    if(componentId.equals("my-names")) {
+   if(componentId.equals("my-likes")) {
+      String name = tuple.getString(0);
+      String favorite = tuple.getString(1);
+
+      if (favoritesMap.get(name) == null) {
+      // not present, add the name with favorite
+      favoritesMap.put(name, favorite);
+      }
+      //Note we do not emit!
+    } else if(componentId.equals("my-names")) {
       // get the column name from tuple and check if favorites exists
       String name = tuple.getString(0);
 
@@ -86,15 +95,6 @@ public class ExclamationTopology {
 
     }
 
-    } else if(componentId.equals("my-likes")) {
-      String name = tuple.getString(0);
-      String favorite = tuple.getString(1);
-
-      if (favoritesMap.get(name) == null) {
-      // not present, add the name with favorite
-      favoritesMap.put(name, favorite);
-      }
-      //Note we do not emit!
     } else if(componentId.equals("exclaim1")) {
       String word = tuple.getString(0);
       // build the word with the exclamation marks appended
