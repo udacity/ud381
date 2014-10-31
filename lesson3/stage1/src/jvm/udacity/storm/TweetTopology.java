@@ -16,6 +16,13 @@ import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
+// NOTE - you must install the python Beautiful Soup module in Ubuntu
+// before this code will run.  In your virtual machine, run:
+//
+// sudo apt-get install python-bs4
+//
+// see Lesson 4 for details on adding this provision to your Vagrantfile
+
 // Lesson 3 Stage 1 is taken from Lesson 2 Stage 6 to provide a basic starting point.
 // Copy, paste and uncomment the following resources module in the POM.xml file.
 // This defines the src/jvm/udacity/storm/resources location needed for python shell
