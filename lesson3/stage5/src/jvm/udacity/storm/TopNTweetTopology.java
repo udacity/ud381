@@ -23,7 +23,7 @@ class TopNTweetTopology
   public static void main(String[] args) throws Exception
   {
     //Variable TOP_N number of words
-    int TOP_N = 20;
+    int TOP_N = 10;
     // create the topology
     TopologyBuilder builder = new TopologyBuilder();
 
@@ -42,6 +42,7 @@ class TopNTweetTopology
         "[Your secret key]",
         "[Your access token]",
         "[Your access secret]"
+
     );
 
     // attach the tweet spout to the topology - parallelism of 1
@@ -55,13 +56,16 @@ class TopNTweetTopology
     //builder.setBolt("parse-tweet-bolt", new ParseTweetBolt(), 10).shuffleGrouping("random-sentence-spout");
 
     // attach the count bolt using fields grouping - parallelism of 15
-    //builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
+    builder.setBolt("count-bolt", new CountBolt(), 15).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 
     // attach rolling count bolt using fields grouping - parallelism of 5
-    builder.setBolt("rolling-count-bolt", new RollingCountBolt(30, 10), 1).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
+    // TEST
+    //builder.setBolt("rolling-count-bolt", new RollingCountBolt(30, 10), 1).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 
     //from incubator-storm/.../storm/starter/RollingTopWords.java
-    builder.setBolt("intermediate-ranker", new IntermediateRankingsBolt(TOP_N), 4).fieldsGrouping("rolling-count-bolt", new Fields("obj"));
+    //builder.setBolt("intermediate-ranker", new IntermediateRankingsBolt(TOP_N), 4).fieldsGrouping("rolling-count-bolt", new Fields("obj"));
+
+    builder.setBolt("intermediate-ranker", new IntermediateRankingsBolt(TOP_N), 4).fieldsGrouping("count-bolt", new Fields("word"));
     builder.setBolt("total-ranker", new TotalRankingsBolt(TOP_N)).globalGrouping("intermediate-ranker");
 
     // attach the report bolt using global grouping - parallelism of 1
