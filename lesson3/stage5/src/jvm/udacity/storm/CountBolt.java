@@ -28,7 +28,7 @@ public class CountBolt extends BaseRichBolt
   private OutputCollector collector;
 
   // Map to store the count of the words
-  private Map<String, Integer> countMap;
+  private Map<String, Long> countMap;
 
   @Override
   public void prepare(
@@ -41,7 +41,7 @@ public class CountBolt extends BaseRichBolt
     collector = outputCollector;
 
     // create and initialize the map
-    countMap = new HashMap<String, Integer>();
+    countMap = new HashMap<String, Long>();
   }
 
   @Override
@@ -54,11 +54,11 @@ public class CountBolt extends BaseRichBolt
     if (countMap.get(word) == null) {
 
       // not present, add the word with a count of 1
-      countMap.put(word, 1);
+      countMap.put(word, 1L);
     } else {
 
       // already there, hence get the count
-      Integer val = countMap.get(word);
+      Long val = countMap.get(word);
 
       // increment the count and save it to the map
       countMap.put(word, ++val);
