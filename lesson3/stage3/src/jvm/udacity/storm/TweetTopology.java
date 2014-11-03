@@ -100,7 +100,7 @@ class TweetTopology
       // submit the topology to the local cluster
       cluster.submitTopology("tweet-word-count", conf, builder.createTopology());
 
-      // let the topology run for 20 seconds. note topologies never terminate!
+      // let the topology run for 1000*20 seconds. note topologies never terminate!
       Utils.sleep(1000*20000);
 
       // now kill the topology
