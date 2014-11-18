@@ -123,7 +123,7 @@ public class ReporterExclamationTopology {
 
     // attach the exclamation bolt to the topology - parallelism of 3
     //builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
-    //builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("rand-sentence");
+    builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("rand-sentence");
 
     // attach another exclamation bolt to the topology - parallelism of 2
     //builder.setBolt("exclaim2", new ExclamationBolt(), 2).shuffleGrouping("exclaim1");
@@ -157,8 +157,8 @@ public class ReporterExclamationTopology {
       // submit the topology to the local cluster
       cluster.submitTopology("exclamation", conf, builder.createTopology());
 
-      // let the topology run for 10 seconds. note topologies never terminate!
-      Thread.sleep(10000);
+      // let the topology run for 30 seconds. note topologies never terminate!
+      Thread.sleep(30000);
 
       // kill the topology
       cluster.killTopology("exclamation");
