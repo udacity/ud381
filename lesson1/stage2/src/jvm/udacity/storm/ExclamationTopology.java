@@ -113,8 +113,8 @@ public class ExclamationTopology {
       // submit the topology to the local cluster
       cluster.submitTopology("exclamation", conf, builder.createTopology());
 
-      // let the topology run for 10 seconds. note topologies never terminate!
-      Thread.sleep(10000);
+      // let the topology run for 30 seconds. note topologies never terminate!
+      Thread.sleep(30000);
 
       // kill the topology
       cluster.killTopology("exclamation");
