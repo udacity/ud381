@@ -42,7 +42,7 @@ class TopNTweetTopology
     builder.setBolt("infoBolt", new InfoBolt(), 10).fieldsGrouping("parse-tweet-bolt", new Fields("county_id"));
     builder.setBolt("top-words", new TopWords(), 10).fieldsGrouping("infoBolt", new Fields("county_id"));
     builder.setBolt("report-bolt", new ReportBolt(), 1).globalGrouping("top-words");
-    
+
     // attach rolling count bolt using fields grouping - parallelism of 5
     //builder.setBolt("rolling-count-bolt", new RollingCountBolt(1000, 10), 1).fieldsGrouping("parse-tweet-bolt", new Fields("tweet-word"));
 

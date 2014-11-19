@@ -1,5 +1,6 @@
 // Word cloud layout by Jason Davies, http://www.jasondavies.com/word-cloud/
 // Algorithm due to Jonathan Feinberg, http://static.mrfeinberg.com/bv_ch03.pdf
+// D3 Word Cloud Implementation by Eric Coopey: http://bl.ocks.org/ericcoopey/6382449
 (function(exports) {
     function cloud() {
         var size = [256, 256],

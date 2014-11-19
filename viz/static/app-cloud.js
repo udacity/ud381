@@ -1,3 +1,6 @@
+// D3 Word Cloud Implementation by Eric Coopey:
+// http://bl.ocks.org/ericcoopey/6382449
+
 var source = new EventSource('/stream');
 var hash = {};
 var width = 1200;
