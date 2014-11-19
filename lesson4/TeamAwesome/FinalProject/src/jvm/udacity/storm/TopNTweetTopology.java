@@ -24,7 +24,6 @@ class TopNTweetTopology
      * https://dev.twitter.com/discussions/631
      *
      */
-
     // now create the tweet spout with the credentials
     // credential
     TweetSpout tweetSpout = new TweetSpout(
