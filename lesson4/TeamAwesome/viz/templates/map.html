@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.q0-9 { fill:rgb(247,251,255); }
+.q1-9 { fill:rgb(222,235,247); }
+.q2-9 { fill:rgb(198,219,239); }
+.q3-9 { fill:rgb(158,202,225); }
+.q4-9 { fill:rgb(107,174,214); }
+.q5-9 { fill:rgb(66,146,198); }
+.q6-9 { fill:rgb(33,113,181); }
+.q7-9 { fill:rgb(8,81,156); }
+.q8-9 { fill:rgb(8,48,107); }
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://datamaps.github.io/scripts/datamaps.usa.js?v=1"></script>
+<script src="\static\countyLookup.js"></script>
+
+<div id="container" style="position: relative; width: 1600px; height: 700px;"></div>
+<script>
+
+var colors = 
+    [ "#0000FF",
+      "#0066FF",
+      "#3399FF",
+      "#66CCFF",
+      "#CCFFFF",
+      "#CCFFCC",
+      "#FFFFCC",
+      "#FFFF99",
+      "#FFFF66",
+      "#FFFF00",
+      "#FFFF00"];
+      var source = new EventSource('/stream');
+      var hashSentence = {};
+      var hashSentiment = {};
+
+      source.onmessage = function (event) {
+        var county_id = event.data.split("DELIMITER")[0];
+        var sentence = event.data.split("DELIMITER")[1];
+        var sentiment = event.data.split("DELIMITER")[2]; 
+        //var URLInfo = event.data.split("DELIMITER")[3]; 
+
+        console.log("NEW DATA IS HERE " + event.data);
+
+        hashSentence[county_id]=sentence;
+        hashSentiment[county_id]=sentiment;
+//hashURLInfo[county_id]=URLInfo;
+
+      };
+
+     var map = new Datamap({
+        element: document.getElementById('container'),
+
+        scope: 'counties',
+        setProjection: function(element, options) {
+            var projection, path;
+            projection = d3.geo.albersUsa()
+                .scale(element.offsetWidth)
+                .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+
+            path = d3.geo.path()
+                .projection( projection );
+
+            return {path: path, projection: projection};
+        },
+        fills: {
+            defaultFill: 'green'
+        },
+
+        data: {
+        },
+
+        geographyConfig: {
+            dataUrl: '/static/us.json',
+            popupTemplate: function(geo, data) {
+
+              var lineOfTweets = "<p>" + hashSentence[geo.id] + "</p>";
+              
+              console.log(lineOfTweets)
+
+                return ['<div class="hoverinfo"><strong>',
+                        'Top tweets in ', countyLookup[geo.id],  lineOfTweets, 
+                        '</strong></div>'].join('');
+            }
+        }
+    });
+
+
+
+
+
+
+var updateViz =  function(){
+
+    for(key in hashSentiment)
+    {
+
+        console.log("REFRESH: " + key + ":" + hashSentiment[key]);
+        var data = {}; 
+
+        if(hashSentiment[key])
+        {
+          data[key] = colors[Math.round(hashSentiment[key]*10)];
+          map.updateChoropleth(data);
+        
+        }
+    }
+
+    hashSentiment = {};
+}
+
+window.setInterval(updateViz, 1000);
+
+</script>
+
+
+</body>
