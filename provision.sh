@@ -22,8 +22,8 @@ echo "Storm..."
 # TODO maybe make this use the best mirror always?
 sudo mkdir /opt/storm
 cd /opt/storm
-sudo wget http://mirror.cogentco.com/pub/apache/incubator/storm/apache-storm-0.9.2-incubating/apache-storm-0.9.2-incubating.tar.gz
-sudo tar xvzf apache-storm-0.9.2-incubating.tar.gz
-sudo rm apache-storm-0.9.2-incubating.tar.gz
-sudo chmod +x /opt/storm/apache-storm-0.9.2-incubating/bin/storm
-sudo ln -s /opt/storm/apache-storm-0.9.2-incubating/bin/storm /usr/bin/storm
+sudo wget http://apache.mirror.vexxhost.com/storm/apache-storm-0.9.3/apache-storm-0.9.3.tar.gz
+sudo tar xvzf apache-storm-0.9.3.tar.gz
+sudo rm apache-storm-0.9.3.tar.gz
+sudo chmod +x /opt/storm/apache-storm-0.9.3/bin/storm
+sudo ln -s /opt/storm/apache-storm-0.9.3/bin/storm /usr/bin/storm
