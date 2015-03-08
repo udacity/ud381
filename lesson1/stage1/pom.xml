@@ -27,75 +27,81 @@
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>6.8.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easytesting</groupId>
-      <artifactId>fest-assert-core</artifactId>
-      <version>2.0M8</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <version>2.6.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.storm</groupId>
-      <artifactId>storm-core</artifactId>
-      <version>0.9.3</version>
-      <!-- keep storm out of the jar-with-dependencies -->
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>15.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-core</artifactId>
-      <version>[3.0,)</version>
-    </dependency>
-    <dependency>
-      <groupId>org.twitter4j</groupId>
-      <artifactId>twitter4j-stream</artifactId>
-      <version>[3.0,)</version>
-    </dependency>
+     <groupId>com.lambdaworks</groupId>
+     <artifactId>lettuce</artifactId>
+     <version>2.3.3</version>
+   </dependency>
+   
+   <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>3.8.1</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.testng</groupId>
+    <artifactId>testng</artifactId>
+    <version>6.8.5</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-all</artifactId>
+    <version>1.9.0</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.easytesting</groupId>
+    <artifactId>fest-assert-core</artifactId>
+    <version>2.0M8</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.jmock</groupId>
+    <artifactId>jmock</artifactId>
+    <version>2.6.0</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.apache.storm</groupId>
+    <artifactId>storm-core</artifactId>
+    <version>0.9.3</version>
+    <!-- keep storm out of the jar-with-dependencies -->
+    <scope>provided</scope>
+  </dependency>
+  <dependency>
+    <groupId>commons-collections</groupId>
+    <artifactId>commons-collections</artifactId>
+    <version>3.2.1</version>
+  </dependency>
+  <dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>15.0</version>
+  </dependency>
+  <dependency>
+    <groupId>org.twitter4j</groupId>
+    <artifactId>twitter4j-core</artifactId>
+    <version>[3.0,)</version>
+  </dependency>
+  <dependency>
+    <groupId>org.twitter4j</groupId>
+    <artifactId>twitter4j-stream</artifactId>
+    <version>[3.0,)</version>
+  </dependency>
     <!--
     COPY AND PASE: lettuce (redis) here: pom.xml file (located lesson1/stage1/pom.xml)
-     -->
-  </dependencies>
+  -->
+</dependencies>
 
-  <build>
-    <sourceDirectory>src/jvm</sourceDirectory>
-    <plugins>
+<build>
+  <sourceDirectory>src/jvm</sourceDirectory>
+  <plugins>
       <!--
         Bind the maven-assembly-plugin to the package phase
         this will create a jar file without the storm dependencies
         suitable for deployment to a cluster.
-       -->
+      -->
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
@@ -172,11 +178,11 @@
        <artifactId>maven-compiler-plugin</artifactId>
        <version>3.1</version>
        <configuration>
-           <!-- or whatever version you use -->
+         <!-- or whatever version you use -->
          <source>1.7</source>
          <target>1.8</target>
        </configuration>
      </plugin>
-    </plugins>
-  </build>
+   </plugins>
+ </build>
 </project>
