@@ -5,14 +5,6 @@ echo "Real-Time Provisioning...."
 echo "Java JDK..."
 sudo apt-get install default-jdk -y
 
-echo "Storm..."
-#sudo wget http://apache.spinellicreations.com/incubator/storm/apache-storm-0.9.1-incubating/apache-storm-0.9.1-incubating.zip
-#sudo unzip -o /media/sf_VirtualBoxUbuntuShared/apache-storm-0.9.1-incubating.zip
-sudo wget http://www.trieuvan.com/apache/incubator/storm/apache-storm-0.9.2-incubating/apache-storm-0.9.2-incubating.zip
-sudo unzip -o $(pwd)/apache-storm-0.9.2-incubating.zip
-# use storm.0.9.2 for now...confirming with Twitter
-sudo ln -s $(pwd)/apache-storm-0.9.2-incubating/ /usr/share/storm
-sudo ln -s /usr/share/storm/bin/storm /usr/bin/storm
 
 echo "Lein..."
 sudo wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
