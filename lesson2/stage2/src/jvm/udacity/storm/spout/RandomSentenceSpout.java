@@ -33,7 +33,8 @@ public class RandomSentenceSpout extends BaseRichSpout {
       "i am at two with &#228;&#338;" };
     String sentence = sentences[_rand.nextInt(sentences.length)];
     //TODO id like to shuffle the string and break sentence in small chunks
-    _collector.emit(new Values(sentence));
+     
+    _collector.emit(new Values(sentence));   
   }
 
   @Override
