@@ -9,8 +9,8 @@ www.udacity.com/course/ud381
 
  - updated to point to fixed apache storm repo
  - added provision task for vagrant 
- - run or re-run vagrant provision - will remove old, reinstall storm
- - run or re-run vagrant --provision-with jdk8   - this will upgrade to jdk8 and set it to default
+ - run or re-run vagrant provision --provision-with bootstrap - will remove old, reinstall storm
+ - run or re-run vagrant provision --provision-with jdk8  - this will upgrade to jdk8 and set it to default
 
 
  - Install JDK 8 since default is 6 
