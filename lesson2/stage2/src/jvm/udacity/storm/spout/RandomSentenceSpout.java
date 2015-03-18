@@ -26,12 +26,13 @@ public class RandomSentenceSpout extends BaseRichSpout {
   public void nextTuple() {
     Utils.sleep(100);
     String[] sentences = new String[]{
-      "the cow jumped over the moon",
+      "&#187;&#223;&#228;&#228;&#338;&#339;&#353;&#402;",
       "an apple a day keeps the doctor away",
-      "four score and seven years ago",
-      "snow white and the seven dwarfs",
-      "i am at two with nature" };
+      "&#338;&#339; seven years ago",
+      "snow white and the seven &#223;&#228;&#228;",
+      "i am at two with &#228;&#338;" };
     String sentence = sentences[_rand.nextInt(sentences.length)];
+    //TODO id like to shuffle the string and break sentence in small chunks
     _collector.emit(new Values(sentence));
   }
 
