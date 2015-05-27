@@ -62,3 +62,4 @@ packer_virtualbox-ovf_virtualbox.box
 **/target/*
 
 .credentials
+.idea
