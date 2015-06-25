@@ -18,3 +18,15 @@ www.udacity.com/course/ud381
  - sudo add-apt-repository ppa:webupd8team/java
  - sudo apt-get update
  - sudo apt-get install oracle-java8-installer
+
+
+
+
+### Environmental variables need to be set:
+
+=====
+
+export TWITTER_CKEY=...
+export TWITTER_SKEY=...
+export TWITTER_TOKEN=..
+export TWITTER_SECRET=...
