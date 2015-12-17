@@ -149,7 +149,7 @@ public class WordCountTopology {
       // tell storm the schema of the output tuple for this spout
       // tuple consists of a two columns called 'word' and 'count'
 
-      // declare the first column 'word', second colmun 'count'
+      // declare the first column 'word', second column 'count'
 
       //****************************************************
       //BEGIN YOUR CODE - Part 2-of-3
